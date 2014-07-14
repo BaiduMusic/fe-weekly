@@ -55,10 +55,142 @@ time >-------------->>
 大二时看的，如今仍受益匪浅。他将 “生产者-消费者问题” 转化为了 “是谁在主导主循环” 问题。
 显然在生产消费问题里，没有主导者，就像“鸡生蛋，蛋生鸡问题”一样，正是因为如此，大家才觉得这问题很棘手。
 
-当然不是每个 FE 都熟悉 Lua，这里我写个 JS 的例子再现当年经典，对比用不用 代码顺序控制 的实现的差异。
+当然不是每个 FE 都熟悉 Lua，而且生产消费问题也很少人会在 FE 编程里碰到，这里我们只演示如何利用 Generator
+解决 callback hell 代码风格的问题。
 
 <script type="text/javascript">
 
+	var async_task = function (index, callback) {
+		setTimeout(function () {
+			var data = 'data: ' + index;
+			callback(data);
+		}, Math.random() * 100);
+	};
 
+	// 串行执行异步任务。
+	async_task(0, function (data) {
+		console.log(data);
+
+		async_task(1, function (data) {
+			console.log(data);
+
+			async_task(2, function (data) {
+				console.log(data);
+			});
+		});
+	});
+
+
+	// 生成适应 yield 接口的异步函数
+	var create_task = function (index) {
+		return function async_task (callback) {
+			setTimeout(function () {
+				var data = 'data: ' + index;
+				callback(data);
+			}, Math.random() * 100);
+		};
+	};
+
+
+	var sync_scope = function (generator) {
+		var iter = generator();
+
+		// 这是一个对应异步任务的 callback
+		var callback = function (data) {
+			var yield_item = iter.next(data);
+
+			if (!yield_item.done) {
+				var task = yield_item.value;
+
+				// 触发下一个 yield
+				task(callback);
+			}
+		};
+
+		// 启动递归
+		callback();
+	};
+
+	// 利用 yield 暂停代码
+	sync_scope(function* () {
+		console.log(yield create_task(0));
+		console.log(yield create_task(1));
+		console.log(yield create_task(2));
+	})
 
 </script>
+
+不使用 Generator 的一般实现：
+
+```javascript
+var async_task = function (index, callback) {
+	setTimeout(function () {
+		var data = 'data: ' + index;
+		callback(data, 'asdf');
+	}, Math.random() * 100);
+};
+
+// 串行执行异步任务。
+async_task(0, function (data) {
+	console.log(data);
+
+	async_task(1, function (data) {
+		console.log(data);
+
+		async_task(2, function (data) {
+			console.log(data);
+		});
+	});
+});
+```
+
+使用 Generator 的理想效果：
+
+```javascript
+sync_scope(function* () {
+	console.log(async_task(0));
+	console.log(async_task(1));
+	console.log(async_task(2));
+});
+```
+
+使用 Generator 的实际代码示意：
+
+```javascript
+// 生成适应 yield 接口的异步函数
+var create_task = function (index) {
+	return function async_task (callback) {
+		setTimeout(function () {
+			var data = 'data: ' + index;
+			callback(data);
+		}, Math.random() * 100);
+	};
+};
+
+
+var sync_scope = function (generator) {
+	var iter = generator();
+
+	// 这是一个对应异步任务的 callback
+	var callback = function (data) {
+		var yield_item = iter.next(data);
+
+		if (!yield_item.done) {
+			var task = yield_item.value;
+
+			// 触发下一个 yield
+			task(callback);
+		}
+	};
+
+	// 启动递归
+	callback();
+};
+
+// 利用 yield 暂停代码
+sync_scope(function* () {
+	console.log(yield create_task(0));
+	console.log(yield create_task(1));
+	console.log(yield create_task(2));
+})
+```
