@@ -59,7 +59,6 @@ time >-------------->>
 解决 callback hell 代码风格的问题。
 
 <script type="text/javascript">
-
 	var async_task = function (index, callback) {
 		setTimeout(function () {
 			var data = 'data: ' + index;
@@ -79,8 +78,45 @@ time >-------------->>
 			});
 		});
 	});
+</script>
 
+不使用 Generator 的一般实现：
 
+```javascript
+var async_task = function (index, callback) {
+	setTimeout(function () {
+		var data = 'data: ' + index;
+		callback(data);
+	}, Math.random() * 100);
+};
+
+// 串行执行异步任务。
+async_task(0, function (data) {
+	console.log(data);
+
+	async_task(1, function (data) {
+		console.log(data);
+
+		async_task(2, function (data) {
+			console.log(data);
+		});
+	});
+});
+```
+
+使用 Generator 的理想效果：
+
+```javascript
+sync_scope(function* () {
+	console.log(async_task(0));
+	console.log(async_task(1));
+	console.log(async_task(2));
+});
+```
+
+使用 Generator 的实际代码示意：
+
+<script>
 	// 生成适应 yield 接口的异步函数
 	var create_task = function (index) {
 		return function async_task (callback) {
@@ -117,44 +153,7 @@ time >-------------->>
 		console.log(yield create_task(1));
 		console.log(yield create_task(2));
 	})
-
 </script>
-
-不使用 Generator 的一般实现：
-
-```javascript
-var async_task = function (index, callback) {
-	setTimeout(function () {
-		var data = 'data: ' + index;
-		callback(data, 'asdf');
-	}, Math.random() * 100);
-};
-
-// 串行执行异步任务。
-async_task(0, function (data) {
-	console.log(data);
-
-	async_task(1, function (data) {
-		console.log(data);
-
-		async_task(2, function (data) {
-			console.log(data);
-		});
-	});
-});
-```
-
-使用 Generator 的理想效果：
-
-```javascript
-sync_scope(function* () {
-	console.log(async_task(0));
-	console.log(async_task(1));
-	console.log(async_task(2));
-});
-```
-
-使用 Generator 的实际代码示意：
 
 ```javascript
 // 生成适应 yield 接口的异步函数
@@ -166,7 +165,6 @@ var create_task = function (index) {
 		}, Math.random() * 100);
 	};
 };
-
 
 var sync_scope = function (generator) {
 	var iter = generator();
@@ -194,3 +192,45 @@ sync_scope(function* () {
 	console.log(yield create_task(2));
 })
 ```
+
+可以看到， Generator 并不是随便拿上来就能用，就跟使用 Promise 一样需要按照一定的模式实现函数。
+换句话说，其实用起来还是有一定复杂度的，并不是完美的方案。
+
+除此之外 `yield` 和 `return` 一样只能传入一个参数，如果你运行这样的代码 `yield(1,2,3)`，只有最后的 `3` 会被传到 `next`。
+
+下面是用函数式编程的一种解决方式：
+
+<script type="text/javascript">
+	var task = [0, 1, 2];
+
+	var run = function (data) {
+		if (data)
+			console.log(data);
+
+		var index = task.shift();
+		if (index != null)
+			async_task(index, run);
+	}
+
+	run();
+</script>
+
+```javascript
+var task = [0, 1, 2];
+
+var run = function (data) {
+	if (data)
+		console.log(data);
+
+	var index = task.shift();
+	if (index != null)
+		async_task(index, run);
+}
+
+run();
+```
+
+如果我们使用函数式编程处理这个问题，代码理解难度可能更低，但代码的统一度会比使用了 Generator 的差。
+从异常捕获角度来讲，使用 Generator 显然会让代码结构更容易理解。
+
+总体来说不论使用哪种方案，你都无法避免将 callback 封装一次。
