@@ -118,9 +118,10 @@ volume.connect(context.destination);
 ```
 
 ### 更多探索
-Web Audio API为前端开发者打开了一扇在浏览端处理、分析音频的大门，本篇文章仅仅是一个入门级的介绍。借助Audio API提供的便捷接口，我们能找到很多音频相关的实际应用。比如，我们[百度音乐前端团队][10]就曾做过一些音频应用的尝试：http://labs.music.baidu.com/demo/audiolab/。
+Web Audio API为前端开发者打开了一扇在浏览端处理、分析音频的大门，本篇文章仅仅是一个入门级的介绍。借助Audio API提供的便捷接口，我们能找到很多音频相关的实际应用。比如，我们[百度音乐前端团队][10]就曾做过一些音频应用的尝试：http://labs.music.baidu.com/demo/audiolab/ 。
 
 最后，为了更好的了解并探索“门后”的精彩世界，不妨抽出时间，读读我们翻译的[官方地图（Web Audio API官方文档中文版）][11]，以便按图索骥：）
+当然，目前的翻译难免有疏忽之处，也欢迎大家来共同完善之：https://github.com/Baidu-Music-FE/WebAudioAPI 。
 
   [1]: http://labs.music.baidu.com/muplayer/doc/
   [2]: http://webaudio.github.io/web-audio-api/
