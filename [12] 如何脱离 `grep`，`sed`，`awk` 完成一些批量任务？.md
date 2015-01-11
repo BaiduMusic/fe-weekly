@@ -1,7 +1,5 @@
 # 如何脱离 `grep`，`sed`，`awk` 完成一些批量任务？
 
-鉴于类 Unix 系统会被频繁使用，给大家扫扫雷。
-
 首先要提下 python 的 `-c` 选项，比如打印 `10`：`python -c 'print 10'` 。即使不用 -c 选项，用 pipe 也是可以的，如 `echo 'print 10' | python`。这种用法非常标准，ruby，lua，node 之类的一般解释器都支持。ruby 甚至支持 `-n` 和 `-p` 这种便利的选项。
 
 除此之外你还可以用 `cat | python`，输入完成后 `enter, ctrl-D` 结束输入。这样做的好处是可以随意打回车或者引号了。
