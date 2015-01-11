@@ -84,7 +84,7 @@ $1'
 这里只提一个常见的问题，关于 coffee 的单行代码怎么写的问题。这个问题上 coffe 和 python 最大的不同在于多了一个 `then` 关键字：
 
 - `c 'for i in [1..10] then puts i'`
-- `c `try F.readFileSync 'a.txt'; catch err then puts err'`
+- ```c `try F.readFileSync 'a.txt'; catch err then puts err'```
 
 当然，由于 js 是最 buggy 的 duck typing 语言之一, 外加大部分的功能和库都是能用 chain 范式完成功能的，one line code 非常容易写。
 
