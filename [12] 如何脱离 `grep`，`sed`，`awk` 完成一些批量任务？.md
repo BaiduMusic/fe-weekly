@@ -2,13 +2,15 @@
 
 首先要提下 python 的 `-c` 选项，比如打印 `10`：`python -c 'print 10'` 。即使不用 -c 选项，用 pipe 也是可以的，如 `echo 'print 10' | python`。这种用法非常标准，ruby，lua，node 之类的一般解释器都支持。ruby 甚至支持 `-n` 和 `-p` 这种便利的选项。
 
-除此之外你还可以用 `cat | python`，输入完成后 `enter, ctrl-D` 结束输入。这样做的好处是可以随意打回车或者引号了。
+一旦你理解了 pipe 的基本原理：
 
-如果你会 vim，可以开空 vim，然后 insert 模式下输入 `print 10`，然后命令模式下输入 `:w !python` 结束输入。用 vim 的好处是有语法高亮等高级功能而不产生临时文件。
+0. 你可以用 `cat | python`，输入完 `print 10` 后 `enter, ctrl-D` 结束输入。这样做的好处是可以随意打回车或者引号了。
+
+0. 如果你会 vim，可以开空 vim，然后 insert 模式下输入 `print 10`，然后命令模式下输入 `:w !python` 结束输入。用 vim 的好处是有语法高亮等高级功能而不产生临时文件。
 
 ## Ruby
 
-这里先讲 ruby 因为 mac 自带 ruby，它原 [生字符串处理库][string] 很强大，而且有便利的撇号 ["`" 和 "%x"][subshell]，感兴趣的话可以看看文档，即使你不懂 ruby 也会觉得这些让它非常适合处理 cli 任务。
+这里先讲 ruby， 因为 mac 自带 ruby，它原 [生字符串处理库][string] 很强大，而且有便利的撇号 ["`" 和 "%x"][subshell]，感兴趣的话可以看看文档，即使你不懂 ruby 也会觉得这些让它非常适合处理 cli 任务。
 
 [string]: http://www.ruby-doc.org/core-2.2.0/String.html
 [subshell]: http://ruby-doc.org/core-2.2.0/Kernel.html#method-i-60
