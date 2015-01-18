@@ -1,4 +1,4 @@
-# 如何脱离 `grep`，`sed`，`awk` 完成一些批量任务？
+# 不使用 `grep`，`sed`，`awk` 完成一些批量任务？
 
 首先要提下 python 的 `-c` 选项，比如打印 `10`：`python -c 'print 10'` 。即使不用 -c 选项，用 pipe 也是可以的，如 `echo 'print 10' | python`。这种用法非常标准，ruby，lua，node 之类的一般解释器都支持。ruby 甚至支持 `-n` 和 `-p` 这种便利的选项。
 
